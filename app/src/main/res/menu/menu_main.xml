@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_language"
+        android:title="Language" />
+    <item
+        android:id="@+id/action_nickname"
+        android:title="Your Nickname" />
+    <item
+        android:id="@+id/action_anti_spam_settings"
+        android:title="Anti-Spam Settings" />
+    <item
+        android:id="@+id/action_chat_history"
+        android:title="Chat History" />
+</menu>

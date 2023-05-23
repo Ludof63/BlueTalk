@@ -37,6 +37,10 @@ public class BluetoothConnector {
         acceptThread.start();
     }
 
+    public void CancelListen(){
+        acceptThread.cancel();
+    }
+
     public void Connect(String deviceAddress){
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
         connectThread = new ConnectThread(device);

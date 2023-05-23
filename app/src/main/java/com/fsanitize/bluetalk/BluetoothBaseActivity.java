@@ -48,10 +48,9 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION = 11;
     protected static final String CONNECTED_SOCKET = "connected_docket";
-
+    public static final String MY_ADDRESS = "me";
     protected static BluetoothManager bluetoothManager;
     protected static BluetoothAdapter bluetoothAdapter;
-
     protected static BluetoothChat bluetoothChat = null;
 
     @Override

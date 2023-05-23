@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BlueTalk</string>
+    <string name="chat_time_pattern">HH:mm:ss</string>
 </resources>
