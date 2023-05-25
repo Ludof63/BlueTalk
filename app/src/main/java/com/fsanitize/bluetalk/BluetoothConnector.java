@@ -18,6 +18,14 @@ import java.util.UUID;
  * using the technique of both the two host as client and server
  */
 public class BluetoothConnector {
+
+    public interface ConnectorResult {
+        public static final int CONNECTION_OK = 0;
+        public static final int CONNECTION_TIMEOUT = 1;
+
+        public static final int CONNECTION_RECEIVED = 2;
+
+    }
     private static final UUID BLUETALK_UUID = UUID.fromString("2dbd25f2-f34c-11ed-a05b-0242ac120003");
     private static final String  SOCKET_NAME = "bluetalkSocket";
     private static final String LOG_TAG = "bluetooth-connector";
@@ -41,8 +49,7 @@ public class BluetoothConnector {
         acceptThread.cancel();
     }
 
-    public void Connect(String deviceAddress){
-        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+    public void Connect(BluetoothDevice device){
         connectThread = new ConnectThread(device);
         connectThread.start();
     }
@@ -75,6 +82,7 @@ public class BluetoothConnector {
                 if (socket != null) {
                     Log.d(LOG_TAG, "Accept Thread: Connection accepted");
                     Message m = new Message();
+                    m.what = ConnectorResult.CONNECTION_RECEIVED;
                     m.obj = socket;
                     returnHandler.sendMessage(m);
                     Log.d(LOG_TAG, "Accept Thread: Sent connectedSocket to handler");
@@ -119,12 +127,17 @@ public class BluetoothConnector {
         @SuppressLint("MissingPermission")
         public void run() {
             Log.d(LOG_TAG, "Connect Thread: Started");
-            bluetoothAdapter.cancelDiscovery();
+            if(bluetoothAdapter.isDiscovering())
+                bluetoothAdapter.cancelDiscovery();
 
             try {
                 socket.connect();
             } catch (IOException connectException) {
                 try {
+                    Message m = new Message();
+                    m.what = ConnectorResult.CONNECTION_TIMEOUT;
+                    m.obj = device.getName();
+                    returnHandler.sendMessage(m);
                     socket.close();
                 } catch (IOException closeException) {
                     Log.e(LOG_TAG, "Could not close the client socket", closeException);
@@ -135,6 +148,7 @@ public class BluetoothConnector {
             Log.d(LOG_TAG, "Connect Thread: connection succeeded -> cancelling listen");
             acceptThread.cancel();
             Message m = new Message();
+            m.what = ConnectorResult.CONNECTION_OK;
             m.obj = socket;
             returnHandler.sendMessage(m);
             Log.d(LOG_TAG, "Connect Thread: connectedSocket sent to handler");

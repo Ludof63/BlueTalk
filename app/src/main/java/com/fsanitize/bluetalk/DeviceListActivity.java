@@ -1,8 +1,11 @@
 package com.fsanitize.bluetalk;
 
+import static android.Manifest.permission.ACCESS_BACKGROUND_LOCATION;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
@@ -10,9 +13,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,37 +31,88 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
-@SuppressLint("MissingPermission")
+//@SuppressLint("MissingPermission")
 public class DeviceListActivity extends BluetoothBaseActivity {
-
     private final static String LOG_TAG = "device-list-activity";
-    private ListView listPairedDevices, listAvailableDevices;
-    private ArrayAdapter<String> adapterPairedDevices, adapterAvailableDevices;
+
+    Map<Integer, String> deviceTypes = new HashMap<Integer,String>() {
+        {
+            put(BluetoothClass.Device.PHONE_SMART, "OK");
+        }
+    };
+    private static HashMap<String,BluetoothDevice> availabeDevices= new HashMap<> ();
+    private ListView listAvailableDevices;
+    private ArrayAdapter<String> adapterAvailableDevices;
     private Button buttonScan;
     private ProgressBar progressBar_scan;
     private Context context;
-    private Toolbar toolbar;
     private BluetoothConnector bluetoothConnector;
 
-    private Handler returnBluetoothConnectorHandler = new Handler(new Handler.Callback() {
+
+    private final Handler returnBluetoothConnectorHandler = new Handler(new Handler.Callback() {
+
+        @SuppressLint("MissingPermission")
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-            Log.d(LOG_TAG,"Connector handler received a result");
-
-            BluetoothSocket connectedSocket = (BluetoothSocket) msg.obj;
-            if(connectedSocket == null){
-                Log.e(LOG_TAG,"Bluetooth socket is null");
+            BluetoothSocket connectedSocket = null;
+            Log.d(LOG_TAG, "Connector handler: received a result");
+            switch (msg.what){
+                case BluetoothConnector.ConnectorResult.CONNECTION_OK:
+                    Log.d(LOG_TAG, "Connector handler: connection ok");
+                    connectedSocket = (BluetoothSocket) msg.obj;
+                    if (connectedSocket == null) {
+                        Log.e(LOG_TAG, "Connector handler: Bluetooth socket is null");
+                        return false;
+                    }
+                    bluetoothChat = new BluetoothChat(connectedSocket);
+                    startActivity(new Intent(context, BluetoothChatActivity.class));
+                    break;
+                case BluetoothConnector.ConnectorResult.CONNECTION_TIMEOUT:
+                    Log.d(LOG_TAG, "Connector handler: connection ko");
+                    showToast(context,"BlueTalk connection failed with " + msg.what);
+                    break;
+                case BluetoothConnector.ConnectorResult.CONNECTION_RECEIVED:
+                    Log.d(LOG_TAG, "Connector handler: accepted connection, sure?");
+                    BluetoothSocket acceptedSocket= (BluetoothSocket) msg.obj;
+                    if (acceptedSocket == null) {
+                        Log.e(LOG_TAG, "Connector handler: Bluetooth socket is null");
+                        return false;
+                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DeviceListActivity.this);
+                    builder.setTitle("Received Connection");
+                    builder.setMessage("Do you want to BlueTalk with " + acceptedSocket.getRemoteDevice().getName() + "? ");
+                    builder.setPositiveButton("BlueTalk", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Log.d(LOG_TAG,"Connector handler: connection accepted started chat");
+                            bluetoothChat = new BluetoothChat(acceptedSocket);
+                            startActivity(new Intent(context, BluetoothChatActivity.class));
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Log.d(LOG_TAG,"Connector handler: connection refused");
+                            try {
+                                acceptedSocket.close();
+                            } catch (IOException e) {
+                                Log.e(LOG_TAG,"Connector handler: could not close the socket");
+                            }
+                        }
+                    });
+                    builder.show();
+                    break;
             }
-
-            bluetoothChat = new BluetoothChat(connectedSocket);
-            startActivity(new Intent(context,BluetoothChatActivity.class));
-            Log.d(LOG_TAG,"Connector handler: end");
             return false;
         }
     });
@@ -74,70 +131,61 @@ public class DeviceListActivity extends BluetoothBaseActivity {
             bluetoothSettings();
             return true;
         }
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
     public void onBackPressed() {
         bluetoothConnector.CancelListen();
         DeviceListActivity.super.onBackPressed();
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_list);
+        context = this;
 
-        toolbar = findViewById(R.id.toolbar_device_list_activity);
+        Toolbar toolbar = findViewById(R.id.toolbar_device_list_activity);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Discover Nearby");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               finish();
-            }
-        });
-
-        listPairedDevices = findViewById(R.id.listview_paired_devices);
-        adapterPairedDevices = new ArrayAdapter<>(this,R.layout.device_list_item);
-        listPairedDevices.setAdapter(adapterPairedDevices);
-
         buttonScan = findViewById(R.id.button_scan);
         progressBar_scan = findViewById(R.id.progressBar_scan);
-        context = this;
 
         listAvailableDevices = findViewById(R.id.listview_new_devices);
-        adapterAvailableDevices = new ArrayAdapter<>(this,R.layout.device_list_item);
+        adapterAvailableDevices = new ArrayAdapter<>(this, R.layout.device_list_item);
         listAvailableDevices.setAdapter(adapterAvailableDevices);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        bluetoothConnector = new BluetoothConnector(bluetoothAdapter,returnBluetoothConnectorHandler);
-        progressBar_scan.setActivated(false);
-        progressBar_scan.setVisibility(View.INVISIBLE);
+        setProgressBar(false);
 
+        //register receiver for discover
+        registerReceiver(discoverReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        registerReceiver(discoverReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+        registerReceiver(discoverReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+
+        bluetoothConnector = new BluetoothConnector(bluetoothAdapter, returnBluetoothConnectorHandler);
         bluetoothConnector.Listen();
 
-        listPairedDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listAvailableDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
-                bluetoothConnector.Connect(address);
+                bluetoothConnector.Connect(availabeDevices.get(address));
             }
         });
 
-        IntentFilter filterDiscoverFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        IntentFilter filterDiscoverEnd = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(discoverReceiver, filterDiscoverFound);
-        registerReceiver(discoverReceiver, filterDiscoverEnd);
-
+        buttonScan.setOnClickListener(view -> scanDevices());
     }
 
     @Override
@@ -150,72 +198,108 @@ public class DeviceListActivity extends BluetoothBaseActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        adapterPairedDevices.clear();
-
-        //already paired
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                adapterPairedDevices.add(device.getName() + "\n" + device.getAddress());
-            }
-        }
-
-        buttonScan.setOnClickListener(view -> scanDevices());
-
-    }
-
-
+    @SuppressLint("MissingPermission")
     private void bluetoothSettings() {
-        if (bluetoothAdapter.isDiscovering()) {
-            bluetoothAdapter.cancelDiscovery();
-        }
+        stopScan();
         startActivity(new Intent().setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopScan();
         unregisterReceiver(discoverReceiver);
     }
 
     private void scanDevices() {
-        adapterAvailableDevices.clear();
+        //asking for background access
+        if(ActivityCompat.checkSelfPermission(this, ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            locationPermissionLauncher.launch(ACCESS_BACKGROUND_LOCATION);
+            return;
+        }
 
+        //asking for location enabled
+        if(!isLocationEnabled()){
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            return;
+        }
+
+        adapterAvailableDevices.clear();
+        availabeDevices.clear();
+
+        stopScan();
+        bluetoothAdapter.startDiscovery();
+
+        progressBar_scan.setVisibility(View.VISIBLE);
+        progressBar_scan.setActivated(true);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void stopScan(){
         if (bluetoothAdapter.isDiscovering()) {
             bluetoothAdapter.cancelDiscovery();
         }
-
-        bluetoothAdapter.startDiscovery();
-        progressBar_scan.setVisibility(View.VISIBLE);
-        progressBar_scan.setActivated(true);
-        showToast(this,"Scan started" );
     }
 
 
-
+    @SuppressLint("MissingPermission")
     private final BroadcastReceiver discoverReceiver = new BroadcastReceiver() {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                showToast(context,"Device found " + device.getName());
-//                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-//                    adapterAvailableDevices.add(device.getName() + "\n" + device.getAddress());
-//                }
+                BluetoothClass device_class = intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS);
+                Log.d(LOG_TAG,"Device found " + device.getName());
+
+                //only phones
+                if(deviceTypes.containsKey(device_class.getDeviceClass())) {
+                    //only not already founded
+                    if (!availabeDevices.containsKey(device.getAddress())) {
+                        availabeDevices.put(device.getAddress(), device);
+                        String status = "";
+                        if (device.getBondState() == BluetoothDevice.BOND_BONDED)
+                            status = "[paired]\n";
+                        adapterAvailableDevices.add(device.getName() + "\n" + status + device.getAddress());
+                    }
+                }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 progressBar_scan.setVisibility(View.INVISIBLE);
                 progressBar_scan.setActivated(false);
-                if (adapterAvailableDevices.getCount() == 0) {
+
+                if (availabeDevices.isEmpty()) {
                     Toast.makeText(context, "No new devices found", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(context, "Click on the device to start the chat", Toast.LENGTH_SHORT).show();
                 }
             }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                Log.d(LOG_TAG,"Discovery started");
+            }
         }
     };
+
+    private void setProgressBar(boolean enabled){
+        progressBar_scan.setActivated(enabled);
+        progressBar_scan.setVisibility(enabled?View.VISIBLE:View.INVISIBLE);
+    }
+
+    private boolean isLocationEnabled(){
+        LocationManager loc = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        return loc.isLocationEnabled();
+    }
+
+    private ActivityResultLauncher<String> locationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if(isGranted){
+            showToast(this, "Background location granted");
+            this.recreate();
+        }
+        else{
+            showToast(this, "Background location not granted...needed to scan");
+            finish();
+        }
+    });
 
 }

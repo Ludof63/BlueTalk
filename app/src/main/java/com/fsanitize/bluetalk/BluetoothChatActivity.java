@@ -39,7 +39,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
         @Override
         public boolean handleMessage(@NonNull android.os.Message msg) {
             switch (msg.what){
-                case 0:
+                case BluetoothChat.MessageConstants.MESSAGE_READ:
                     Log.d(TAG_LOG, "Chat Handler: read a message");
                     byte[] buffer = (byte[]) msg.obj;
                     String inputBuffer = new String(buffer, 0, msg.arg1);
@@ -48,7 +48,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     chat_adapter.notifyDataSetChanged();
                     //Toast.makeText(context, inputBuffer, Toast.LENGTH_SHORT).show();
                     break;
-                case 1:
+                case BluetoothChat.MessageConstants.MESSAGE_WRITE:
                     Log.d(TAG_LOG, "Chat Handler: wrote a message");
                     byte[] buffer1 = (byte[]) msg.obj;
                     String outputBuffer = new String(buffer1);
@@ -59,11 +59,11 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     Toast.makeText(context,"Message sent",Toast.LENGTH_SHORT).show();
                     break;
 
-                case 2:
+                case BluetoothChat.MessageConstants.MESSAGE_TOAST:
                     Toast.makeText(context, msg.getData().getString("toast"), Toast.LENGTH_SHORT).show();
                     break;
 
-                case 3:
+                case BluetoothChat.MessageConstants.MESSAGE_DISCONNECTION:
                     bluetoothChat.close();
                     finish();
                     break;
@@ -122,13 +122,16 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_chat);
-
         context = this;
+        if(bluetoothChat == null){
+            Log.e(TAG_LOG, "Chat Activity: bluetooth chat is null");
+            finish();
+        }
 
         toolbar = findViewById(R.id.toolbar_chat_activity);
         setSupportActionBar(toolbar);
         //TODO set title to nickname
-        getSupportActionBar().setTitle("Nickname");
+        getSupportActionBar().setTitle(bluetoothChat.getNickName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         editText_reply = findViewById(R.id.editText_reply);
@@ -154,10 +157,6 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     protected void onStart() {
         super.onStart();
         BluetoothSocket connectedSocket = null;
-        if(bluetoothChat == null){
-            Log.e(TAG_LOG, "Chat Activity: bluetooth chat is null");
-            finish();
-        }
         bluetoothChat.attachHandler(UIChat_handler);
     }
 

@@ -1,5 +1,6 @@
 package com.fsanitize.bluetalk;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,12 @@ public class BluetoothChat {
     private static final String LOG_TAG = "bluetooth-chat";
     private Handler UIChat_handler = null;
     private BluetoothSocket connectedSocket;
+    private String nickName;
+
+    public String getNickName() {
+        return nickName;
+    }
+
     private ConnectedThread worker;
     public interface MessageConstants {
         public static final int MESSAGE_READ = 0;
@@ -22,13 +29,17 @@ public class BluetoothChat {
         public static final int MESSAGE_DISCONNECTION = 3;
     }
 
+    @SuppressLint("MissingPermission")
     public BluetoothChat(BluetoothSocket connectedSocket, Handler UIChat_handler){
         this.UIChat_handler = UIChat_handler;
         this.connectedSocket = connectedSocket;
+        this.nickName = connectedSocket.getRemoteDevice().getName();
     }
 
+    @SuppressLint("MissingPermission")
     public BluetoothChat(BluetoothSocket connectedSocket){
         this.connectedSocket = connectedSocket;
+        this.nickName = connectedSocket.getRemoteDevice().getName();
     }
 
     public void attachHandler(Handler UIChat_handler){

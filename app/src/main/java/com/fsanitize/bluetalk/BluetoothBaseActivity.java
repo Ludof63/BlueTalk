@@ -1,5 +1,8 @@
 package com.fsanitize.bluetalk;
 
+import static android.Manifest.permission.ACCESS_BACKGROUND_LOCATION;
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.BLUETOOTH;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
 import static android.Manifest.permission.BLUETOOTH_ADVERTISE;
@@ -19,6 +22,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,13 +40,15 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
                     new String[] {
                             BLUETOOTH_SCAN,
                             BLUETOOTH_ADVERTISE,
-                            BLUETOOTH_CONNECT
+                            BLUETOOTH_CONNECT,
+                            ACCESS_FINE_LOCATION
                     };
         } else {
             REQUIRED_PERMISSIONS =
                     new String[]{
                             BLUETOOTH,
-                            BLUETOOTH_ADMIN
+                            BLUETOOTH_ADMIN,
+                            ACCESS_FINE_LOCATION,
                     };
         }
     }
@@ -56,13 +63,11 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getBluetoothPermissions();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         bluetoothManager = getSystemService(BluetoothManager.class);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (bluetoothAdapter == null) {
@@ -70,6 +75,7 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
             return;
         }
 
+        getBluetoothPermissions();
         registerReceiver(bStateReceiver,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
@@ -82,17 +88,14 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
     }
 
     private void getBluetoothPermissions() {
-        if (!hasPermissions(this, getRequiredPermissions())) {
-            ActivityCompat.requestPermissions(this, getRequiredPermissions(), REQUEST_PERMISSION);
+        if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_PERMISSION);
         }
-    }
-    private static String[] getRequiredPermissions() {
-        return REQUIRED_PERMISSIONS;
     }
 
     private static boolean hasPermissions(Context context, String... permissions) {
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
@@ -115,6 +118,8 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+
 
     private final BroadcastReceiver bStateReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -144,18 +149,5 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
 
     public void showToast(Context context, String message){
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-    }
-
-    protected class BluetoothSocketHelper implements Serializable {
-
-       private BluetoothSocket bluetoothSocket;
-
-        public BluetoothSocket getBluetoothSocket() {
-            return bluetoothSocket;
-        }
-
-        public BluetoothSocketHelper(BluetoothSocket bluetoothSocket) {
-            this.bluetoothSocket = bluetoothSocket;
-        }
     }
 }
