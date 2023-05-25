@@ -131,6 +131,10 @@ public class DeviceListActivity extends BluetoothBaseActivity {
             bluetoothSettings();
             return true;
         }
+        if (id == R.id.action_location_settings) {
+            locationSettings();
+            return true;
+        }
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
@@ -204,6 +208,11 @@ public class DeviceListActivity extends BluetoothBaseActivity {
         startActivity(new Intent().setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS));
     }
 
+    private void locationSettings() {
+        stopScan();
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -220,7 +229,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
 
         //asking for location enabled
         if(!isLocationEnabled()){
-            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            locationSettings();
             return;
         }
 

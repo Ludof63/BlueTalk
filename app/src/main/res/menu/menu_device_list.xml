@@ -3,4 +3,7 @@
     <item
         android:id="@+id/action_bluetooth_settings"
         android:title="Bluetooth Settings" />
+    <item
+        android:id="@+id/action_location_settings"
+        android:title="Location Settings" />
 </menu>
