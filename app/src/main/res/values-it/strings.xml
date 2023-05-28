@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BlueTalk</string>
+    <string name="chat_time_pattern">HH:mm:ss</string>
+    <string name="main_bluetooth_is_disabled">Il Bluetooth è disabilitato</string>
+    <string name="main_bluetalk_nearby">BlueTalk nelle vicinanze</string>
+    <string name="main_activate_bluetooth">Attiva Bluetooth</string>
+    <string name="main_app_description">BlueTalk:\nchatta con il bluetooth nelle vicinanze!</string>
+    <string name="dev_list_scan">Scansione</string>
+    <string name="chat_type_your_message_here">Scrivi qui il tuo messaggio</string>
+    <string name="chat_send">Invia</string>
+    <string name="chat_activate_emotion_tracking">Attiva monitoraggio-emozioni</string>
+    <string name="dev_list_bluetooth_settings">Impostazioni bluetooth</string>
+    <string name="dev_list_location_settings">Impostazioni posizione</string>
+    <string name="dev_list_bluetooth_visibility">Visibilità Bluetooth</string>
+    <string name="main_language">Lingua</string>
+    <string name="main_chat_history">Cronologia chat</string>
+</resources>
