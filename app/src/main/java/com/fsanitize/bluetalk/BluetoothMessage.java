@@ -1,10 +1,9 @@
 package com.fsanitize.bluetalk;
 
 public class BluetoothMessage {
-    private String message;
-    private String senderAddress;
-    private String senderNickname;
-    private long createdAt;
+    public String message;
+    public String senderAddress;
+    public long createdAt;
 
     public BluetoothMessage(String message, String senderAddress, long createdAt) {
         this.message = message;

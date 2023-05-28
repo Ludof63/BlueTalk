@@ -12,9 +12,10 @@ import android.widget.TextView;
 
 public class MainActivity extends BluetoothBaseActivity {
 
-    TextView text_error;
-    Button button_start;
-    Button button_discover;
+    private TextView text_error;
+    private Button button_start;
+    private Button button_discover;
+    private final BlueTalkHistory historyManager = new BlueTalkHistory();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -27,12 +28,6 @@ public class MainActivity extends BluetoothBaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_language) {
-            return true;
-        }
-        if (id == R.id.action_nickname) {
-            return true;
-        }
-        if (id == R.id.action_anti_spam_settings) {
             return true;
         }
         if (id == R.id.action_chat_history) {
@@ -72,6 +67,7 @@ public class MainActivity extends BluetoothBaseActivity {
                 handlerBluetoothIsDisabled();
         });
         button_discover.setOnClickListener(view -> {
+            historyManager.restoreHistory(this);
             startActivity(new Intent(this,DeviceListActivity.class));
         });
     }

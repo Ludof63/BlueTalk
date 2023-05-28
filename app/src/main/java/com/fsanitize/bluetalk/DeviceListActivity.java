@@ -35,6 +35,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
@@ -46,6 +47,7 @@ import java.util.Set;
 //@SuppressLint("MissingPermission")
 public class DeviceListActivity extends BluetoothBaseActivity {
     private final static String LOG_TAG = "device-list-activity";
+    private final static int VISIBILITY_REQUEST_CODE = 22;
 
     Map<Integer, String> deviceTypes = new HashMap<Integer,String>() {
         {
@@ -59,6 +61,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     private ProgressBar progressBar_scan;
     private Context context;
     private BluetoothConnector bluetoothConnector;
+    private final BlueTalkHistory historyManager = new BlueTalkHistory();
 
 
     private final Handler returnBluetoothConnectorHandler = new Handler(new Handler.Callback() {
@@ -123,6 +126,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -133,6 +137,10 @@ public class DeviceListActivity extends BluetoothBaseActivity {
         }
         if (id == R.id.action_location_settings) {
             locationSettings();
+            return true;
+        }
+        if (id == R.id.action_visibility) {
+            bluetoothVisibility();
             return true;
         }
         if (id == android.R.id.home) {
@@ -216,6 +224,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        historyManager.storeHistory(context);
         stopScan();
         unregisterReceiver(discoverReceiver);
     }
@@ -261,12 +270,12 @@ public class DeviceListActivity extends BluetoothBaseActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 BluetoothClass device_class = intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS);
-                Log.d(LOG_TAG,"Device found " + device.getName());
+                //Log.d(LOG_TAG,"Device found " + device.getName());
 
                 //only phones
                 if(deviceTypes.containsKey(device_class.getDeviceClass())) {
-                    //only not already founded
-                    if (!availabeDevices.containsKey(device.getAddress())) {
+                    //only not already founded (with name not null)
+                    if (!availabeDevices.containsKey(device.getAddress()) && device.getName() != null) {
                         availabeDevices.put(device.getAddress(), device);
                         String status = "";
                         if (device.getBondState() == BluetoothDevice.BOND_BONDED)
@@ -311,4 +320,22 @@ public class DeviceListActivity extends BluetoothBaseActivity {
         }
     });
 
+    @SuppressLint("MissingPermission")
+    private void bluetoothVisibility(){
+        Log.d(LOG_TAG,"bluetooth visibility");
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivityForResult(discoverableIntent, VISIBILITY_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == VISIBILITY_REQUEST_CODE){
+            if(resultCode == requestCode)
+                showToast(context, "Your device is no visible");
+            else
+                Log.e(LOG_TAG,"Could not make device discoverable");
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

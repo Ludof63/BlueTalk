@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">BlueTalk</string>
     <string name="chat_time_pattern">HH:mm:ss</string>
+    <string name="main_bluetooth_is_disabled">Bluetooth is disabled</string>
+    <string name="main_bluetalk_nearby">BlueTalk Nearby</string>
+    <string name="main_activate_bluetooth">Activate Bluetooth</string>
+    <string name="main_app_description">BlueTalk:\n chat with bluetooth nearby!</string>
+    <string name="dev_list_scan">Scan</string>
+    <string name="chat_type_your_message_here">Type your message here</string>
+    <string name="chat_send">send</string>
+    <string name="chat_activate_emotion_tracking">Activate Emotion-Tracking</string>
+    <string name="dev_list_bluetooth_settings">Bluetooth Settings</string>
+    <string name="dev_list_location_settings">Location Settings</string>
+    <string name="dev_list_bluetooth_visibility">Bluetooth Visibility</string>
+    <string name="main_language">Language</string>
+    <string name="main_chat_history">Chat History</string>
 </resources>

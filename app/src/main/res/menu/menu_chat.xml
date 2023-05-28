@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/action_block_user"
-        android:title="Block User" />
-    <item
-        android:id="@+id/action_user_disable_anti_spam"
-        android:title="Disable anti-spam for User" />
+        android:id="@+id/action_chat_emotion"
+        android:title="@string/chat_activate_emotion_tracking" />
 </menu>

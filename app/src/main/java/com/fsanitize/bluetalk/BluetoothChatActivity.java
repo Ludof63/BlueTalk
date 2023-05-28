@@ -33,6 +33,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     private Context context;
     private BluetoothMessageListAdapter chat_adapter;
     private List<BluetoothMessage> messageList = new LinkedList<>();
+    private final BlueTalkHistory historyManager = new BlueTalkHistory();
 
 
     private Handler UIChat_handler = new Handler(new Handler.Callback() {
@@ -43,10 +44,9 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     Log.d(TAG_LOG, "Chat Handler: read a message");
                     byte[] buffer = (byte[]) msg.obj;
                     String inputBuffer = new String(buffer, 0, msg.arg1);
-                    BluetoothMessage receivedMessage = new BluetoothMessage(inputBuffer,"not me",System.currentTimeMillis());
+                    BluetoothMessage receivedMessage = new BluetoothMessage(inputBuffer,bluetoothChat.getAddress(),System.currentTimeMillis());
                     messageList.add(receivedMessage);
                     chat_adapter.notifyDataSetChanged();
-                    //Toast.makeText(context, inputBuffer, Toast.LENGTH_SHORT).show();
                     break;
                 case BluetoothChat.MessageConstants.MESSAGE_WRITE:
                     Log.d(TAG_LOG, "Chat Handler: wrote a message");
@@ -56,7 +56,6 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     messageList.add(sentMessage);
                     chat_adapter.notifyDataSetChanged();
                     linearLayoutManager.scrollToPosition(recyclerView_chat.getAdapter().getItemCount() - 1);
-                    Toast.makeText(context,"Message sent",Toast.LENGTH_SHORT).show();
                     break;
 
                 case BluetoothChat.MessageConstants.MESSAGE_TOAST:
@@ -64,6 +63,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     break;
 
                 case BluetoothChat.MessageConstants.MESSAGE_DISCONNECTION:
+                    historyManager.updateUserHistory(bluetoothChat.getAddress(), messageList);
                     bluetoothChat.close();
                     finish();
                     break;
@@ -82,10 +82,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_block_user) {
-            return true;
-        }
-        if (id == R.id.action_user_disable_anti_spam) {
+        if (id == R.id.action_chat_emotion) {
             return true;
         }
         if(id == android.R.id.home){
@@ -103,14 +100,14 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
         builder.setMessage("Do you want to exit? ");
         builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //saveResult();
+                historyManager.updateUserHistory(bluetoothChat.getAddress(), messageList);
                 bluetoothChat.close();
                BluetoothChatActivity.super.onBackPressed();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                BluetoothChatActivity.super.onBackPressed();
+                dialog.dismiss();
             }
         });
         builder.show();
@@ -130,7 +127,6 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
 
         toolbar = findViewById(R.id.toolbar_chat_activity);
         setSupportActionBar(toolbar);
-        //TODO set title to nickname
         getSupportActionBar().setTitle(bluetoothChat.getNickName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -157,6 +153,14 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     protected void onStart() {
         super.onStart();
         BluetoothSocket connectedSocket = null;
+        List<BluetoothMessage> chat_history = historyManager.getUserHistory(bluetoothChat.getAddress());
+        if(chat_history != null){
+            Log.d(TAG_LOG, "Restored chat history");
+            for (BluetoothMessage m : chat_history) {
+                messageList.add(m);
+            }
+            chat_adapter.notifyDataSetChanged();
+        }
         bluetoothChat.attachHandler(UIChat_handler);
     }
 

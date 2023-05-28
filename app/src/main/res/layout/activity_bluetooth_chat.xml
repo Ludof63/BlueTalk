@@ -63,10 +63,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:ems="10"
-            android:hint="Type your message here"
             android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/chat_type_your_message_here"
             android:inputType="textMultiLine"
+            android:minHeight="48dp"
+            android:textColorHint="#8D6E63"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -74,7 +76,7 @@
             android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="send"
+            android:text="@string/chat_send"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"

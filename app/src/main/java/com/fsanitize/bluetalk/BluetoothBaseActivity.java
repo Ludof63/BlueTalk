@@ -17,6 +17,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,7 +31,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class BluetoothBaseActivity extends AppCompatActivity {
     private static final String[] REQUIRED_PERMISSIONS;
@@ -54,13 +59,13 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
     }
 
     private static final int REQUEST_PERMISSION = 11;
-    protected static final String CONNECTED_SOCKET = "connected_docket";
+    protected static final String CONNECTED_SOCKET = "connected_socket";
     public static final String MY_ADDRESS = "me";
     protected static BluetoothManager bluetoothManager;
     protected static BluetoothAdapter bluetoothAdapter;
     protected static BluetoothChat bluetoothChat = null;
 
-    @Override
+     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -78,7 +83,6 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
         getBluetoothPermissions();
         registerReceiver(bStateReceiver,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
-
 
 
     @Override

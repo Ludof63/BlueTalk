@@ -16,6 +16,11 @@ public class BluetoothChat {
     private Handler UIChat_handler = null;
     private BluetoothSocket connectedSocket;
     private String nickName;
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
 
     public String getNickName() {
         return nickName;
@@ -34,12 +39,14 @@ public class BluetoothChat {
         this.UIChat_handler = UIChat_handler;
         this.connectedSocket = connectedSocket;
         this.nickName = connectedSocket.getRemoteDevice().getName();
+        this.address = connectedSocket.getRemoteDevice().getAddress();
     }
 
     @SuppressLint("MissingPermission")
     public BluetoothChat(BluetoothSocket connectedSocket){
         this.connectedSocket = connectedSocket;
         this.nickName = connectedSocket.getRemoteDevice().getName();
+        this.address = connectedSocket.getRemoteDevice().getAddress();
     }
 
     public void attachHandler(Handler UIChat_handler){

@@ -2,8 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_bluetooth_settings"
-        android:title="Bluetooth Settings" />
+        android:title="@string/dev_list_bluetooth_settings" />
     <item
         android:id="@+id/action_location_settings"
-        android:title="Location Settings" />
+        android:title="@string/dev_list_location_settings" />
+    <item
+        android:id="@+id/action_visibility"
+        android:title="@string/dev_list_bluetooth_visibility" />
 </menu>
