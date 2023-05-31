@@ -40,6 +40,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -84,7 +86,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                     break;
                 case BluetoothConnector.ConnectorResult.CONNECTION_TIMEOUT:
                     Log.d(LOG_TAG, "Connector handler: connection ko");
-                    showToast(context,"BlueTalk connection failed with " + msg.what);
+                    showToast(context,"BlueTalk connection failed");
                     break;
                 case BluetoothConnector.ConnectorResult.CONNECTION_RECEIVED:
                     Log.d(LOG_TAG, "Connector handler: accepted connection, sure?");
@@ -100,6 +102,18 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             Log.d(LOG_TAG,"Connector handler: connection accepted started chat");
                             bluetoothChat = new BluetoothChat(acceptedSocket);
+                            try {
+                                OutputStream ack_stream = acceptedSocket.getOutputStream();
+                                ack_stream.write(BluetoothConnector.ACK);
+                                Log.d(LOG_TAG,"Connector handler: connection accepted ACK sent");
+                            } catch (IOException e) {
+                                Log.e(LOG_TAG,"Connector handler: error sending ACK");
+                                try {
+                                    acceptedSocket.close();
+                                } catch (IOException ex) {
+                                    Log.e(LOG_TAG,"Connector handler: could not close the socket after ACK failed");
+                                }
+                            }
                             startActivity(new Intent(context, BluetoothChatActivity.class));
                         }
                     });
@@ -282,6 +296,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                         if (device.getBondState() == BluetoothDevice.BOND_BONDED)
                             status = "[paired]\n";
                         adapterAvailableDevices.add(device.getName() + "\n" + status + device.getAddress());
+                        adapterAvailableDevices.notifyDataSetChanged();
                     }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {

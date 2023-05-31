@@ -33,7 +33,7 @@
             <TextView
                 android:id="@+id/text_chat_to_message"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
                 android:maxWidth="260dp"
                 android:paddingLeft="12dp"
@@ -46,16 +46,26 @@
 
     </androidx.cardview.widget.CardView>
 
+    <TextView
+        android:id="@+id/text_chat_to_emoticon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#C0C0C0"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView_text_chat_to"
+        app:layout_constraintStart_toEndOf="@+id/cardView_text_chat_to" />
 
     <TextView
         android:id="@+id/text_chat_to_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="8:00"
+        android:layout_marginStart="8dp"
+        android:text="8:00:23 - 12/04/2023"
         android:textColor="#C0C0C0"
         android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cardView_text_chat_to"
-        app:layout_constraintStart_toEndOf="@+id/cardView_text_chat_to" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView_text_chat_to" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

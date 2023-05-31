@@ -10,6 +10,7 @@ import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 
@@ -27,6 +28,7 @@ public class BluetoothConnector {
 
     }
     private static final UUID BLUETALK_UUID = UUID.fromString("2dbd25f2-f34c-11ed-a05b-0242ac120003");
+    public static final int ACK = 42;
     private static final String  SOCKET_NAME = "bluetalkSocket";
     private static final String LOG_TAG = "bluetooth-connector";
     private final BluetoothAdapter bluetoothAdapter;
@@ -133,11 +135,11 @@ public class BluetoothConnector {
             try {
                 socket.connect();
             } catch (IOException connectException) {
-                try {
                     Message m = new Message();
                     m.what = ConnectorResult.CONNECTION_TIMEOUT;
                     m.obj = device.getName();
                     returnHandler.sendMessage(m);
+                try {
                     socket.close();
                 } catch (IOException closeException) {
                     Log.e(LOG_TAG, "Could not close the client socket", closeException);
@@ -145,13 +147,35 @@ public class BluetoothConnector {
                 return;
             }
 
-            Log.d(LOG_TAG, "Connect Thread: connection succeeded -> cancelling listen");
-            acceptThread.cancel();
-            Message m = new Message();
-            m.what = ConnectorResult.CONNECTION_OK;
-            m.obj = socket;
-            returnHandler.sendMessage(m);
-            Log.d(LOG_TAG, "Connect Thread: connectedSocket sent to handler");
+            //WAITING FOR ACK
+            try {
+                InputStream inputStream = socket.getInputStream();
+                Log.d(LOG_TAG, "Connect Thread: Waiting for ACK");
+                if(ACK == inputStream.read()){
+                    Log.d(LOG_TAG, "Connect Thread: RECEIVED ACK: connection succeeded -> cancelling listen");
+                    acceptThread.cancel();
+                    Message m = new Message();
+                    m.what = ConnectorResult.CONNECTION_OK;
+                    m.obj = socket;
+                    returnHandler.sendMessage(m);
+                    Log.d(LOG_TAG, "Connect Thread: connectedSocket sent to handler");
+                    return;
+                }
+                else{
+                    Log.e(LOG_TAG, "Connect Thread: first message received was not ACK");
+                }
+
+            } catch (IOException e) {
+                Message m = new Message();
+                m.what = ConnectorResult.CONNECTION_TIMEOUT;
+                m.obj = device.getName();
+                returnHandler.sendMessage(m);
+            }
+
+
+
+
+
             Log.d(LOG_TAG, "Connect Thread: Ended");
         }
 

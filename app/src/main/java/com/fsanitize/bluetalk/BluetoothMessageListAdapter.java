@@ -19,6 +19,8 @@ import java.util.List;
 public class BluetoothMessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_MESSAGE_SENT = 1;
     private static final int VIEW_MESSAGE_RECEIVED = 2;
+
+    private static final String time_pattern ="dd-MM-yyyy @ HH:mm:ss";
     private Context context;
     private List<BluetoothMessage> messageList;
 
@@ -80,7 +82,7 @@ public class BluetoothMessageListAdapter extends RecyclerView.Adapter {
 
         void bind(BluetoothMessage message) {
             messageText.setText(message.getMessage());
-            timeText.setText(new SimpleDateFormat(context.getString(R.string.chat_time_pattern)).format(new Date(message.getCreatedAt())));
+            timeText.setText(new SimpleDateFormat(time_pattern).format(new Date(message.getCreatedAt())));
         }
     }
 
@@ -96,7 +98,7 @@ public class BluetoothMessageListAdapter extends RecyclerView.Adapter {
 
         void bind(BluetoothMessage message) {
             messageText.setText(message.getMessage());
-            timeText.setText(new SimpleDateFormat(context.getString(R.string.chat_time_pattern)).format(new Date(message.getCreatedAt())));
+            timeText.setText(new SimpleDateFormat(time_pattern).format(new Date(message.getCreatedAt())));
         }
     }
 }
