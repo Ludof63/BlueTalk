@@ -69,10 +69,24 @@ public class BlueTalkHistory {
         chatHistory.put(userAddress,newChatHistory);
     }
 
+    public void removeUserHistory(String userAddress){
+        chatHistory.remove(userAddress);
+    }
+
     public List<BluetoothMessage> getUserHistory(String userAddress){
         if(chatHistory.containsKey(userAddress))
             return chatHistory.get(userAddress);
         return null;
+    }
+
+    public List<UserChatInfo> getUsersWithHistoryInfo(){
+        String[] users = chatHistory.keySet().toArray(new String[0]);
+        List<UserChatInfo> infos = new ArrayList<>();
+        for(String user : users){
+            List<BluetoothMessage> user_chat = chatHistory.get(user);
+            infos.add(new UserChatInfo(user,user_chat.get(0).getNickname(),user_chat.size()));
+        }
+        return  infos;
     }
 
 }

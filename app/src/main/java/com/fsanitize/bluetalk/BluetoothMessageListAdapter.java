@@ -90,7 +90,7 @@ public class BluetoothMessageListAdapter extends RecyclerView.Adapter {
         SentMessageHolder(View itemView) {
             super(itemView);
 
-            messageText = itemView.findViewById(R.id.text_chat_from_message);
+            messageText = itemView.findViewById(R.id.text_nickname_chatH_item);
             timeText = itemView.findViewById(R.id.text_chat_from_time);
         }
 

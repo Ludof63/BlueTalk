@@ -1,14 +1,16 @@
 package com.fsanitize.bluetalk;
 
 public class BluetoothMessage {
-    public String message;
-    public String senderAddress;
-    public long createdAt;
+    private String message;
+    private String senderAddress;
+    private String nickname;
+    private long createdAt;
 
-    public BluetoothMessage(String message, String senderAddress, long createdAt) {
+    public BluetoothMessage(String message, String senderAddress, long createdAt, String nickname) {
         this.message = message;
         this.senderAddress = senderAddress;
         this.createdAt = createdAt;
+        this.nickname = nickname;
     }
 
     public String getSenderAddress() {
@@ -22,5 +24,6 @@ public class BluetoothMessage {
     public String getMessage() {
         return message;
     }
+    public String getNickname() {return nickname;}
 
 }

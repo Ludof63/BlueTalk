@@ -15,7 +15,7 @@ public class MainActivity extends BluetoothBaseActivity {
     private TextView text_error;
     private Button button_start;
     private Button button_discover;
-    private final BlueTalkHistory historyManager = new BlueTalkHistory();
+    private final BlueTalkHistory chat_history = new BlueTalkHistory();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -31,6 +31,8 @@ public class MainActivity extends BluetoothBaseActivity {
             return true;
         }
         if (id == R.id.action_chat_history) {
+            chat_history.restoreHistory(this);
+            startActivity(new Intent(this,ChatHistoryActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -67,7 +69,7 @@ public class MainActivity extends BluetoothBaseActivity {
                 handlerBluetoothIsDisabled();
         });
         button_discover.setOnClickListener(view -> {
-            historyManager.restoreHistory(this);
+            chat_history.restoreHistory(this);
             startActivity(new Intent(this,DeviceListActivity.class));
         });
     }

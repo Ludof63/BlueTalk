@@ -270,7 +270,8 @@ public class DeviceListActivity extends BluetoothBaseActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 BluetoothClass device_class = intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS);
-                //Log.d(LOG_TAG,"Device found " + device.getName());
+                if(device.getName() !=  null)
+                    Log.d(LOG_TAG,"Device found " + device.getName());
 
                 //only phones
                 if(deviceTypes.containsKey(device_class.getDeviceClass())) {
@@ -331,8 +332,8 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == VISIBILITY_REQUEST_CODE){
-            if(resultCode == requestCode)
-                showToast(context, "Your device is no visible");
+            if(resultCode == RESULT_OK)
+                showToast(context, "Your device is now visible");
             else
                 Log.e(LOG_TAG,"Could not make device discoverable");
         }

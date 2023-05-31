@@ -1,6 +1,5 @@
 package com.fsanitize.bluetalk;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -44,7 +43,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     Log.d(TAG_LOG, "Chat Handler: read a message");
                     byte[] buffer = (byte[]) msg.obj;
                     String inputBuffer = new String(buffer, 0, msg.arg1);
-                    BluetoothMessage receivedMessage = new BluetoothMessage(inputBuffer,bluetoothChat.getAddress(),System.currentTimeMillis());
+                    BluetoothMessage receivedMessage = new BluetoothMessage(inputBuffer,bluetoothChat.getAddress(),System.currentTimeMillis(),bluetoothChat.getNickName());
                     messageList.add(receivedMessage);
                     chat_adapter.notifyDataSetChanged();
                     break;
@@ -52,7 +51,7 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
                     Log.d(TAG_LOG, "Chat Handler: wrote a message");
                     byte[] buffer1 = (byte[]) msg.obj;
                     String outputBuffer = new String(buffer1);
-                    BluetoothMessage sentMessage = new BluetoothMessage(outputBuffer,MY_ADDRESS,System.currentTimeMillis());
+                    BluetoothMessage sentMessage = new BluetoothMessage(outputBuffer,MY_ADDRESS,System.currentTimeMillis(), bluetoothChat.getNickName());
                     messageList.add(sentMessage);
                     chat_adapter.notifyDataSetChanged();
                     linearLayoutManager.scrollToPosition(recyclerView_chat.getAdapter().getItemCount() - 1);
@@ -162,6 +161,8 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
             chat_adapter.notifyDataSetChanged();
         }
         bluetoothChat.attachHandler(UIChat_handler);
+
+
     }
 
     @Override
