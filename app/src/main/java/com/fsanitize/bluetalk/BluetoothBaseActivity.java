@@ -73,7 +73,7 @@ public abstract class BluetoothBaseActivity extends LanguageBaseActivity {
         bluetoothManager = getSystemService(BluetoothManager.class);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (bluetoothAdapter == null) {
-            showToast(this, "Bluetooth is not available on this device");
+            showToast(this, getString(R.string.bluetooth_is_not_available_on_this_device));
             return;
         }
 
@@ -108,7 +108,7 @@ public abstract class BluetoothBaseActivity extends LanguageBaseActivity {
             int i = 0;
             for (int grantResult : grantResults) {
                 if (grantResult == PackageManager.PERMISSION_DENIED) {
-                    showToast(this, "Permission not granted: " + permissions[i]);
+                    showToast(this, getString(R.string.permission_not_granted) + permissions[i]);
                     finish();
                     return;
                 }

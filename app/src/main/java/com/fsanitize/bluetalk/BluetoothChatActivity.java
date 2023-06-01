@@ -95,16 +95,16 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Exit Chat");
-        builder.setMessage("Do you want to exit? ");
-        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.exit_chat);
+        builder.setMessage(R.string.do_you_want_to_exit);
+        builder.setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 historyManager.updateUserHistory(bluetoothChat.getAddress(), messageList);
                 bluetoothChat.close();
                BluetoothChatActivity.super.onBackPressed();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }

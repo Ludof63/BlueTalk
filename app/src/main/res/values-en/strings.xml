@@ -14,4 +14,25 @@
     <string name="dev_list_bluetooth_visibility">Bluetooth Visibility</string>
     <string name="main_language">Language</string>
     <string name="main_chat_history">Chat History</string>
+    <string name="bluetooth_is_not_available_on_this_device">Bluetooth is not available on this device</string>
+    <string name="permission_not_granted">"Permission not granted: "</string>
+    <string name="english_language">English</string>
+    <string name="italian_language">Italian</string>
+    <string name="select_a_language">Select a Language</string>
+    <string name="cancel">Cancel</string>
+    <string name="received_connection">Received Connection</string>
+    <string name="do_you_want_to_bluetalk_with">"Do you want to BlueTalk with "</string>
+    <string name="discover_nearby">Discover Nearby</string>
+    <string name="trying_to_start_bluetalk_connection">Trying to start BlueTalk connection</string>
+    <string name="click_on_the_device_to_start_the_chat">Click on the device to start the chat</string>
+    <string name="no_new_devices_found">No new devices found</string>
+    <string name="background_location_granted">Background location granted</string>
+    <string name="background_location_not_granted_needed_to_scan">Background location not granted…needed to scan</string>
+    <string name="your_device_is_now_visible">Your device is now visible</string>
+    <string name="chat_history">Chat History</string>
+    <string name="exit_chat">Exit Chat</string>
+    <string name="do_you_want_to_exit">"Do you want to exit? "</string>
+    <string name="exit">Exit</string>
+    <string name="delete">delete</string>
+    <string name="bluetalk_icon">BLueTalk Icon</string>
 </resources>

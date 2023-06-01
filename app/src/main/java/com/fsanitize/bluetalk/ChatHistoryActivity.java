@@ -47,7 +47,7 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_history_activity);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Chat History");
+        getSupportActionBar().setTitle(R.string.chat_history);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -65,11 +65,11 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
         List<UserChatInfo> aux = historyManager.getUsersWithHistoryInfo();
         if(aux.size() != 0)
-            Log.d(LOG_TAG, "La history non è vuota");
+            Log.d(LOG_TAG, "History is not empty");
         else
-            Log.d(LOG_TAG, "La history è vuota");
+            Log.d(LOG_TAG, "History is empty");
         for(UserChatInfo i : aux){
-            Log.d(LOG_TAG, "User con history: " + i.getAddress());
+            Log.d(LOG_TAG, "User with history: " + i.getAddress());
             userInfoList.add(i);
         }
         infoListAdapter.notifyDataSetChanged();

@@ -36,9 +36,9 @@ public class MainActivity extends BluetoothBaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_language) {
-            String[] LANG = {"English", "Italian"};
+            String[] LANG = {getString(R.string.english_language), getString(R.string.italian_language)};
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Select a Language");
+            builder.setTitle(R.string.select_a_language);
             builder.setItems(LANG, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -58,7 +58,7 @@ public class MainActivity extends BluetoothBaseActivity {
                     }
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.dismiss();
                 }
@@ -81,7 +81,7 @@ public class MainActivity extends BluetoothBaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_main_activity);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("BlueTalk");
+        getSupportActionBar().setTitle(getString(R.string.app_name));
 
         text_error = findViewById(R.id.text_error_main);
         button_start = findViewById(R.id.button_start_main);

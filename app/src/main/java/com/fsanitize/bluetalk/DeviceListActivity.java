@@ -96,9 +96,9 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                         return false;
                     }
                     AlertDialog.Builder builder = new AlertDialog.Builder(DeviceListActivity.this);
-                    builder.setTitle("Received Connection");
-                    builder.setMessage("Do you want to BlueTalk with " + acceptedSocket.getRemoteDevice().getName() + "? ");
-                    builder.setPositiveButton("BlueTalk", new DialogInterface.OnClickListener() {
+                    builder.setTitle(R.string.received_connection);
+                    builder.setMessage(getString(R.string.do_you_want_to_bluetalk_with) + acceptedSocket.getRemoteDevice().getName() + "? ");
+                    builder.setPositiveButton(getString(R.string.app_name), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Log.d(LOG_TAG,"Connector handler: connection accepted started chat");
                             bluetoothChat = new BluetoothChat(acceptedSocket);
@@ -117,7 +117,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                             startActivity(new Intent(context, BluetoothChatActivity.class));
                         }
                     });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Log.d(LOG_TAG,"Connector handler: connection refused");
                             try {
@@ -178,7 +178,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_device_list_activity);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Discover Nearby");
+        getSupportActionBar().setTitle(R.string.discover_nearby);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonScan = findViewById(R.id.button_scan);
@@ -208,7 +208,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
                 bluetoothConnector.Connect(availabeDevices.get(address));
-                showToast(context,"Trying to start BlueTalk connection");
+                showToast(context,getString(R.string.trying_to_start_bluetalk_connection));
             }
         });
 
@@ -302,7 +302,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                             status = "[paired]\n";
                         adapterAvailableDevices.add(device.getName() + "\n" + status + device.getAddress());
                         adapterAvailableDevices.notifyDataSetChanged();
-                        showToast(context,"Click on the device to start the chat");
+                        showToast(context,getString(R.string.click_on_the_device_to_start_the_chat));
                     }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -310,7 +310,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                 progressBar_scan.setActivated(false);
 
                 if (availabeDevices.isEmpty())
-                    showToast(context,"No new devices found");
+                    showToast(context,getString(R.string.no_new_devices_found));
 
 
             }
@@ -332,11 +332,11 @@ public class DeviceListActivity extends BluetoothBaseActivity {
 
     private ActivityResultLauncher<String> locationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
         if(isGranted){
-            showToast(this, "Background location granted");
+            showToast(this, getString(R.string.background_location_granted));
             this.recreate();
         }
         else{
-            showToast(this, "Background location not granted...needed to scan");
+            showToast(this, getString(R.string.background_location_not_granted_needed_to_scan));
             finish();
         }
     });
@@ -355,7 +355,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
             if(resultCode == RESULT_CANCELED)
                 Log.d(LOG_TAG,"The user denied discoverability");
             else
-                showToast(context, "Your device is now visible");
+                showToast(context, getString(R.string.your_device_is_now_visible));
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
