@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.Logic;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothSocket;

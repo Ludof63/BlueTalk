@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;

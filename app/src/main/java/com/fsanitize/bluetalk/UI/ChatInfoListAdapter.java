@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,6 +11,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fsanitize.bluetalk.Data.BlueTalkHistory;
+import com.fsanitize.bluetalk.Data.UserChatInfo;
+import com.fsanitize.bluetalk.R;
 
 import java.util.List;
 

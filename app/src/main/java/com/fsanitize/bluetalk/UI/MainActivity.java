@@ -1,22 +1,19 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Locale;
+import com.fsanitize.bluetalk.Data.BlueTalkHistory;
+import com.fsanitize.bluetalk.R;
 
 public class MainActivity extends BluetoothBaseActivity {
 
@@ -68,7 +65,7 @@ public class MainActivity extends BluetoothBaseActivity {
         }
         if (id == R.id.action_chat_history) {
             chat_history.restoreHistory(this);
-            startActivity(new Intent(this,ChatHistoryActivity.class));
+            startActivity(new Intent(this, ChatHistoryActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -106,7 +103,7 @@ public class MainActivity extends BluetoothBaseActivity {
         });
         button_discover.setOnClickListener(view -> {
             chat_history.restoreHistory(this);
-            startActivity(new Intent(this,DeviceListActivity.class));
+            startActivity(new Intent(this, DeviceListActivity.class));
         });
     }
 

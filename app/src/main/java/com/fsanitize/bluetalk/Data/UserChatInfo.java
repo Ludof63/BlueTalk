@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.Data;
 
 public class UserChatInfo{
     private String address;

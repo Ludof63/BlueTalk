@@ -1,7 +1,5 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
-import static android.Manifest.permission.ACCESS_BACKGROUND_LOCATION;
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.BLUETOOTH;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
@@ -12,32 +10,20 @@ import static android.Manifest.permission.BLUETOOTH_SCAN;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Build;
-import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.google.gson.Gson;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import com.fsanitize.bluetalk.Logic.BluetoothChat;
+import com.fsanitize.bluetalk.R;
+import com.fsanitize.bluetalk.UI.LanguageBaseActivity;
 
 public abstract class BluetoothBaseActivity extends LanguageBaseActivity {
     private static final String[] REQUIRED_PERMISSIONS;
@@ -148,6 +134,6 @@ public abstract class BluetoothBaseActivity extends LanguageBaseActivity {
     }
 
     public void showToast(Context context, String message){
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

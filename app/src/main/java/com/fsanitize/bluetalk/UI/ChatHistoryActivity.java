@@ -1,16 +1,17 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.fsanitize.bluetalk.Data.BlueTalkHistory;
+import com.fsanitize.bluetalk.Data.UserChatInfo;
+import com.fsanitize.bluetalk.R;
 
 import java.util.LinkedList;
 import java.util.List;

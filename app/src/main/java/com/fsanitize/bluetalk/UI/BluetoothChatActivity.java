@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothSocket;
@@ -17,6 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fsanitize.bluetalk.Data.BlueTalkHistory;
+import com.fsanitize.bluetalk.Data.BluetoothMessage;
+import com.fsanitize.bluetalk.Logic.BluetoothChat;
+import com.fsanitize.bluetalk.R;
 
 import java.util.LinkedList;
 import java.util.List;

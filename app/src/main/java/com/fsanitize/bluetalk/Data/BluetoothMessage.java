@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.Data;
 
 public class BluetoothMessage {
     private String message;

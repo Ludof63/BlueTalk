@@ -1,4 +1,4 @@
-package com.fsanitize.bluetalk;
+package com.fsanitize.bluetalk.UI;
 
 import static android.Manifest.permission.ACCESS_BACKGROUND_LOCATION;
 
@@ -29,7 +29,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -39,12 +38,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.fsanitize.bluetalk.Data.BlueTalkHistory;
+import com.fsanitize.bluetalk.Logic.BluetoothChat;
+import com.fsanitize.bluetalk.Logic.BluetoothConnector;
+import com.fsanitize.bluetalk.R;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 //@SuppressLint("MissingPermission")
 public class DeviceListActivity extends BluetoothBaseActivity {
@@ -296,13 +298,15 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                 if(deviceTypes.containsKey(device_class.getDeviceClass())) {
                     //only not already founded (with name not null)
                     if (!availabeDevices.containsKey(device.getAddress()) && device.getName() != null) {
+                        if(availabeDevices.isEmpty()){
+                            showToast(context,getString(R.string.click_on_the_device_to_start_the_chat));
+                        }
                         availabeDevices.put(device.getAddress(), device);
                         String status = "";
                         if (device.getBondState() == BluetoothDevice.BOND_BONDED)
                             status = "[paired]\n";
                         adapterAvailableDevices.add(device.getName() + "\n" + status + device.getAddress());
                         adapterAvailableDevices.notifyDataSetChanged();
-                        showToast(context,getString(R.string.click_on_the_device_to_start_the_chat));
                     }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
