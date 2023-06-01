@@ -208,6 +208,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
                 bluetoothConnector.Connect(availabeDevices.get(address));
+                showToast(context,"Trying to start BlueTalk connection");
             }
         });
 
@@ -216,12 +217,12 @@ public class DeviceListActivity extends BluetoothBaseActivity {
 
     @Override
     protected void handlerBluetoothIsEnabled() {
-
     }
 
     @Override
     protected void handlerBluetoothIsDisabled() {
-
+        bluetoothConnector.CancelListen();
+        DeviceListActivity.super.onBackPressed();
     }
 
     @SuppressLint("MissingPermission")
@@ -236,10 +237,15 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         historyManager.storeHistory(context);
         stopScan();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(discoverReceiver);
     }
 
@@ -276,7 +282,6 @@ public class DeviceListActivity extends BluetoothBaseActivity {
 
     @SuppressLint("MissingPermission")
     private final BroadcastReceiver discoverReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -297,17 +302,17 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                             status = "[paired]\n";
                         adapterAvailableDevices.add(device.getName() + "\n" + status + device.getAddress());
                         adapterAvailableDevices.notifyDataSetChanged();
+                        showToast(context,"Click on the device to start the chat");
                     }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 progressBar_scan.setVisibility(View.INVISIBLE);
                 progressBar_scan.setActivated(false);
 
-                if (availabeDevices.isEmpty()) {
-                    Toast.makeText(context, "No new devices found", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Click on the device to start the chat", Toast.LENGTH_SHORT).show();
-                }
+                if (availabeDevices.isEmpty())
+                    showToast(context,"No new devices found");
+
+
             }
             else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 Log.d(LOG_TAG,"Discovery started");
@@ -347,10 +352,10 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == VISIBILITY_REQUEST_CODE){
-            if(resultCode == RESULT_OK)
-                showToast(context, "Your device is now visible");
+            if(resultCode == RESULT_CANCELED)
+                Log.d(LOG_TAG,"The user denied discoverability");
             else
-                Log.e(LOG_TAG,"Could not make device discoverable");
+                showToast(context, "Your device is now visible");
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+        android:id="@+id/action_chat_language"
+        android:title="@string/main_language" />
     <item
         android:id="@+id/action_chat_emotion"
         android:title="@string/chat_activate_emotion_tracking" />

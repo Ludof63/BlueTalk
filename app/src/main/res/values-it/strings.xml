@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BlueTalk</string>
-    <string name="chat_time_pattern">HH:mm:ss</string>
     <string name="main_bluetooth_is_disabled">Il Bluetooth è disabilitato</string>
     <string name="main_bluetalk_nearby">BlueTalk nelle vicinanze</string>
     <string name="main_activate_bluetooth">Attiva Bluetooth</string>

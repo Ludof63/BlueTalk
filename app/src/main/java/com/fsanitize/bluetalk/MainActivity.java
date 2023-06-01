@@ -2,13 +2,21 @@ package com.fsanitize.bluetalk;
 
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Locale;
 
 public class MainActivity extends BluetoothBaseActivity {
 
@@ -28,6 +36,34 @@ public class MainActivity extends BluetoothBaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_language) {
+            String[] LANG = {"English", "Italian"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Select a Language");
+            builder.setItems(LANG, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case 0:
+                            //en
+                            changeLanguage("en");
+                            saveLanguagePreference("en");
+                            recreate();
+                            break;
+                        case 1:
+                            //it
+                            changeLanguage("it");
+                            saveLanguagePreference("it");
+                            recreate();
+                            break;
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
             return true;
         }
         if (id == R.id.action_chat_history) {

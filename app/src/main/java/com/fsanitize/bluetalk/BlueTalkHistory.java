@@ -48,7 +48,6 @@ public class BlueTalkHistory {
         Log.d(LOG_TAG, "ChatHistory:  restoring chat histories");
         Gson gson = new Gson();
         SharedPreferences pref = context.getSharedPreferences(HISTORY_USERS,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
         String json;
         List<BluetoothMessage> history = new LinkedList<>();
 

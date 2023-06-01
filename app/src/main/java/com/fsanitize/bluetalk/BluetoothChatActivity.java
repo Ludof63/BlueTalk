@@ -172,6 +172,8 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
 
     @Override
     protected void handlerBluetoothIsDisabled() {
-
+        historyManager.updateUserHistory(bluetoothChat.getAddress(), messageList);
+        bluetoothChat.close();
+        BluetoothChatActivity.super.onBackPressed();
     }
 }

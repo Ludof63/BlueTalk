@@ -76,8 +76,8 @@ public class ChatHistoryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+        super.onStop();
         historyManager.storeHistory(this);
-        super.onDestroy();
     }
 }

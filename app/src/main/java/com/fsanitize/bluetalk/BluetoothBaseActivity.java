@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -36,8 +37,9 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
-public abstract class BluetoothBaseActivity extends AppCompatActivity {
+public abstract class BluetoothBaseActivity extends LanguageBaseActivity {
     private static final String[] REQUIRED_PERMISSIONS;
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -65,11 +67,6 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
     protected static BluetoothAdapter bluetoothAdapter;
     protected static BluetoothChat bluetoothChat = null;
 
-     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -83,7 +80,6 @@ public abstract class BluetoothBaseActivity extends AppCompatActivity {
         getBluetoothPermissions();
         registerReceiver(bStateReceiver,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
-
 
     @Override
     protected void onStop() {
