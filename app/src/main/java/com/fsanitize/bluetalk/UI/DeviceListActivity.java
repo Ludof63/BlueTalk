@@ -66,6 +66,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     private Context context;
     private BluetoothConnector bluetoothConnector;
     private final BlueTalkHistory historyManager = new BlueTalkHistory();
+    private boolean isConnecting;
 
 
     private final Handler returnBluetoothConnectorHandler = new Handler(new Handler.Callback() {
@@ -89,6 +90,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
                 case BluetoothConnector.ConnectorResult.CONNECTION_TIMEOUT:
                     Log.d(LOG_TAG, "Connector handler: connection ko");
                     showToast(context,"BlueTalk connection failed");
+                    isConnecting = false;
                     break;
                 case BluetoothConnector.ConnectorResult.CONNECTION_RECEIVED:
                     Log.d(LOG_TAG, "Connector handler: accepted connection, sure?");
@@ -194,6 +196,7 @@ public class DeviceListActivity extends BluetoothBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        isConnecting = false;
         setProgressBar(false);
 
         //register receiver for discover
@@ -207,10 +210,15 @@ public class DeviceListActivity extends BluetoothBaseActivity {
         listAvailableDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String info = ((TextView) view).getText().toString();
-                String address = info.substring(info.length() - 17);
-                bluetoothConnector.Connect(availabeDevices.get(address));
-                showToast(context,getString(R.string.trying_to_start_bluetalk_connection));
+                if(isConnecting){
+                    showToast(context,"Wait...connection already in progress");
+                }else {
+                    String info = ((TextView) view).getText().toString();
+                    String address = info.substring(info.length() - 17);
+                    bluetoothConnector.Connect(availabeDevices.get(address));
+                    showToast(context, getString(R.string.trying_to_start_bluetalk_connection));
+                    isConnecting = true;
+                }
             }
         });
 
