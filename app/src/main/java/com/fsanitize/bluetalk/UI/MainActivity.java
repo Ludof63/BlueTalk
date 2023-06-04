@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.fsanitize.bluetalk.Data.BlueTalkHistory;
 import com.fsanitize.bluetalk.R;
 
+import java.util.Locale;
+
 public class MainActivity extends BluetoothBaseActivity {
 
     private TextView text_error;

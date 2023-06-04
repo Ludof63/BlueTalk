@@ -7,7 +7,7 @@
     <string name="main_app_description">BlueTalk:\n chat with bluetooth nearby!</string>
     <string name="dev_list_scan">Scan</string>
     <string name="chat_type_your_message_here">Type your message here</string>
-    <string name="chat_send">send</string>
+    <string name="chat_send">Send</string>
     <string name="chat_activate_emotion_tracking">Activate Emotion-Tracking</string>
     <string name="dev_list_bluetooth_settings">Bluetooth Settings</string>
     <string name="dev_list_location_settings">Location Settings</string>
@@ -35,4 +35,11 @@
     <string name="exit">Exit</string>
     <string name="delete">delete</string>
     <string name="bluetalk_icon">BLueTalk Icon</string>
+    <string name="disable_sentiment_analysis">Disable sentiment-tracking</string>
+    <string name="enable_sentiment_analysis">Enable sentiment-tracking</string>
+    <string name="activate_sentiment_tracking">Activate Sentiment-Tracking</string>
+    <string name="sentiment_tracking_alert_only_en_message">Sentiment tracking is available only in English, for now.\nDo you wish to activate it anyway?</string>
+    <string name="activate">Activate</string>
+    <string name="sentiment_tracking_disabled">Sentiment tracking disabled</string>
+    <string name="sentiment_tracking_is_now_active">Sentiment tracking is now active</string>
 </resources>

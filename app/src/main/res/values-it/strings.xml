@@ -7,7 +7,7 @@
     <string name="main_app_description">BlueTalk:\nchatta con il bluetooth nelle vicinanze!</string>
     <string name="dev_list_scan">Scansione</string>
     <string name="chat_type_your_message_here">Scrivi qui il tuo messaggio</string>
-    <string name="chat_send">Inviare</string>
+    <string name="chat_send">Invia</string>
     <string name="chat_activate_emotion_tracking">Attiva il monitoraggio delle emozioni</string>
     <string name="dev_list_bluetooth_settings">Impostazioni bluetooth</string>
     <string name="dev_list_location_settings">Impostazioni posizione</string>
@@ -35,4 +35,11 @@
     <string name="exit">Uscita</string>
     <string name="delete">eliminare</string>
     <string name="bluetalk_icon">BLueTalk Icona</string>
+    <string name="disable_sentiment_analysis">Disabilita analisi-sentimenti</string>
+    <string name="enable_sentiment_analysis">Abilita analisi-sentimenti</string>
+    <string name="activate_sentiment_tracking">Attivazione Analisi Sentimenti</string>
+    <string name="sentiment_tracking_alert_only_en_message">Il monitoraggio dei sentimenti è disponibile solo in inglese, per ora.\nDesideri attivarlo comunque?</string>
+    <string name="activate">Attiva</string>
+    <string name="sentiment_tracking_disabled">Analisi sentimenti disabilitata</string>
+    <string name="sentiment_tracking_is_now_active">Analisi sentimenti attivata</string>
 </resources>

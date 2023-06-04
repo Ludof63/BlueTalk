@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -25,10 +26,12 @@ import com.fsanitize.bluetalk.R;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class BluetoothChatActivity extends BluetoothBaseActivity {
-
     private static final String TAG_LOG = "bluetooth-chat-activity";
+    private static final String SENTIMENT_PREFERENCE = "sentiment-preference";
+    private static boolean sentimentStatus;
     private Toolbar toolbar;
     private EditText editText_reply;
     private Button button_send;
@@ -83,10 +86,20 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_chat_emotion).setTitle(sentimentStatus?getString(R.string.disable_sentiment_analysis) : getString(R.string.enable_sentiment_analysis));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.action_chat_emotion) {
+            if(sentimentStatus)
+                disableSentimentAnalysis(true);
+            else
+                enableSentimentAnalysis(true);
             return true;
         }
         if(id == android.R.id.home){
@@ -167,12 +180,11 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
         }
         bluetoothChat.attachHandler(UIChat_handler);
 
-
+        restoreSentimentPreference();
     }
 
     @Override
     protected void handlerBluetoothIsEnabled() {
-
     }
 
     @Override
@@ -180,5 +192,65 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
         historyManager.updateUserHistory(bluetoothChat.getAddress(), messageList);
         bluetoothChat.close();
         BluetoothChatActivity.super.onBackPressed();
+    }
+
+    private void enableSentimentAnalysis(boolean toast){
+        if(Locale.getDefault().getLanguage() != "en" && toast) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle(R.string.activate_sentiment_tracking);
+            builder.setMessage(R.string.sentiment_tracking_alert_only_en_message);
+            builder.setPositiveButton(R.string.activate, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    activateRoutine(true);
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        }
+        else{
+            activateRoutine(toast);
+        }
+    }
+    private void activateRoutine(boolean toast){
+        chat_adapter.enableSentimentAnalysis();
+        sentimentStatus = true;
+        saveSentimentPreference(true);
+        chat_adapter.notifyDataSetChanged();
+        if(toast)
+            showToast(context,getString(R.string.sentiment_tracking_is_now_active));
+    }
+
+    private void disableSentimentAnalysis(boolean toast){
+        chat_adapter.disableSentimentAnalysis();
+        sentimentStatus = false;
+        saveSentimentPreference(false);
+        chat_adapter.notifyDataSetChanged();
+        if(toast)
+            showToast(context,getString(R.string.sentiment_tracking_disabled));
+    }
+
+    public void saveSentimentPreference(boolean enabled){
+        SharedPreferences pref = getSharedPreferences(SENTIMENT_PREFERENCE,MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(SENTIMENT_PREFERENCE,enabled);
+        editor.commit();
+    }
+
+    private boolean getSentimentPreference(){
+        SharedPreferences pref = getSharedPreferences(SENTIMENT_PREFERENCE,MODE_PRIVATE);
+        return pref.getBoolean(SENTIMENT_PREFERENCE,true);
+    }
+
+    private void restoreSentimentPreference(){
+        if(getSentimentPreference())
+            enableSentimentAnalysis(false);
+        else
+            disableSentimentAnalysis(false);
     }
 }
