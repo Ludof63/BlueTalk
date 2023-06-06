@@ -172,10 +172,6 @@ public class BluetoothConnector {
                 returnHandler.sendMessage(m);
             }
 
-
-
-
-
             Log.d(LOG_TAG, "Connect Thread: Ended");
         }
 

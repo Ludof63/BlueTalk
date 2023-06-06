@@ -42,7 +42,6 @@ public class BluetoothChatActivity extends BluetoothBaseActivity {
     private List<BluetoothMessage> messageList = new LinkedList<>();
     private final BlueTalkHistory historyManager = new BlueTalkHistory();
 
-
     private Handler UIChat_handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull android.os.Message msg) {

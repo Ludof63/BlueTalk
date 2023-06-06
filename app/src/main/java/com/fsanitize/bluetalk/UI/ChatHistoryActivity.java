@@ -22,7 +22,6 @@ public class ChatHistoryActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private ChatInfoListAdapter infoListAdapter;
     private List<UserChatInfo> userInfoList = new LinkedList<>();
-
     private final BlueTalkHistory historyManager = new BlueTalkHistory();
 
 

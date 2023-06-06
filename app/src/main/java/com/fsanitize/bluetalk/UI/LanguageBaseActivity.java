@@ -11,14 +11,13 @@ import androidx.core.app.ActivityCompat;
 import java.util.Locale;
 
 public abstract class LanguageBaseActivity extends AppCompatActivity {
+    private static final String LANG_PREFERENCE = "lang-pref";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         restoreLangPreference();
     }
-
-    private static final String LANG_PREFERENCE = "lang-pref";
     public void changeLanguage(String lang){
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
