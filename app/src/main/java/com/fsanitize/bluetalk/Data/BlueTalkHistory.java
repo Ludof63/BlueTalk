@@ -83,7 +83,8 @@ public class BlueTalkHistory {
         List<UserChatInfo> infos = new ArrayList<>();
         for(String user : users){
             List<BluetoothMessage> user_chat = chatHistory.get(user);
-            infos.add(new UserChatInfo(user,user_chat.get(0).getNickname(),user_chat.size()));
+            if(user_chat.size() != 0)
+             infos.add(new UserChatInfo(user,user_chat.get(0).getNickname(),user_chat.size()));
         }
         return  infos;
     }

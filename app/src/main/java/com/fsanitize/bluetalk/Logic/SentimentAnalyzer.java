@@ -140,7 +140,6 @@ public class SentimentAnalyzer {
                 } else if (isNegated(messageWords[wordPosition - i])) {
                     currentValence *= NEG_SCALAR;
                 }
-
             }
         }
         return currentValence;
